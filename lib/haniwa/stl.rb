@@ -5,36 +5,47 @@ module Haniwa
     CHUNK_BYTES = 400_000
 
     def self.chunks(mesh, title = "HaniwaGen")
-      verts = mesh.verts
-      tris = mesh.tris
+      size = Mesh::CHUNK
       parts = []
       out = title.to_s[0, 80].ljust(80, " ")
       out << [mesh.triangle_count].pack("V")
-      k = 0
-      n = tris.size
-      while k < n
-        a = tris[k] * 3
-        b = tris[k + 1] * 3
-        c = tris[k + 2] * 3
-        ax = verts[a]; ay = verts[a + 1]; az = verts[a + 2]
-        bx = verts[b]; by = verts[b + 1]; bz = verts[b + 2]
-        cx = verts[c]; cy = verts[c + 1]; cz = verts[c + 2]
-        ux = bx - ax; uy = by - ay; uz = bz - az
-        vx = cx - ax; vy = cy - ay; vz = cz - az
-        nx = uy * vz - uz * vy
-        ny = uz * vx - ux * vz
-        nz = ux * vy - uy * vx
-        len = Math.sqrt(nx * nx + ny * ny + nz * nz)
-        if len > 0.0
-          nx /= len; ny /= len; nz /= len
+      mesh.tri_chunks.each do |tris|
+        k = 0
+        n = tris.size
+        while k < n
+          a = tris[k]
+          q = a / size
+          qa = q
+          va = mesh.vert_values(q)
+          a = (a - q * size) * 3
+          b = tris[k + 1]
+          q = b / size
+          vb = q == qa ? va : mesh.vert_values(q)
+          b = (b - q * size) * 3
+          c = tris[k + 2]
+          q = c / size
+          vc = q == qa ? va : mesh.vert_values(q)
+          c = (c - q * size) * 3
+          ax = va[a]; ay = va[a + 1]; az = va[a + 2]
+          bx = vb[b]; by = vb[b + 1]; bz = vb[b + 2]
+          cx = vc[c]; cy = vc[c + 1]; cz = vc[c + 2]
+          ux = bx - ax; uy = by - ay; uz = bz - az
+          vx = cx - ax; vy = cy - ay; vz = cz - az
+          nx = uy * vz - uz * vy
+          ny = uz * vx - ux * vz
+          nz = ux * vy - uy * vx
+          len = Math.sqrt(nx * nx + ny * ny + nz * nz)
+          if len > 0.0
+            nx /= len; ny /= len; nz /= len
+          end
+          out << [nx, ny, nz, ax, ay, az, bx, by, bz, cx, cy, cz].pack("e12")
+          out << "\x00\x00"
+          if out.bytesize >= CHUNK_BYTES
+            parts << out
+            out = "".dup
+          end
+          k += 3
         end
-        out << [nx, ny, nz, ax, ay, az, bx, by, bz, cx, cy, cz].pack("e12")
-        out << "\x00\x00"
-        if out.bytesize >= CHUNK_BYTES
-          parts << out
-          out = "".dup
-        end
-        k += 3
       end
       parts << out if out.bytesize > 0
       parts
@@ -44,16 +55,10 @@ module Haniwa
       84 + 50 * mesh.triangle_count
     end
 
-    # プレビュー用: 数値配列を pack したバイト列の配列にする (fmt は "e" か "V")
-    def self.pack_chunks(values, fmt)
+    # プレビュー用: 小分けの数値配列を、それぞれ pack したバイト列にする (fmt は "e" か "V")
+    def self.pack_chunks(chunks, fmt)
       parts = []
-      step = 30_000
-      i = 0
-      n = values.size
-      while i < n
-        parts << values[i, step].pack(fmt + "*")
-        i += step
-      end
+      chunks.each { |values| parts << values.pack(fmt + "*") if values.size > 0 }
       parts
     end
   end

@@ -106,6 +106,6 @@ class MeshTest < Minitest::Test
   end
 
   def test_export_quality_has_more_triangles
-    assert_operator Haniwa.build({}, "export").triangle_count, :>, Haniwa.build({}).triangle_count * 3
+    assert_operator Haniwa.build({}, "export").triangle_count, :>, Haniwa.build({}).triangle_count * 2
   end
 end

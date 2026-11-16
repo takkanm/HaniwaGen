@@ -11,8 +11,7 @@ class StlTest < Minitest::Test
 
     # 最初の三角形の法線と頂点
     values = data[84, 48].unpack("e12")
-    a = mesh.tris[0] * 3
-    assert_in_delta mesh.verts[a], values[3], 1.0e-4
+    assert_in_delta mesh.vertex(mesh.triangle(0)[0])[0], values[3], 1.0e-4
     assert_in_delta 1.0, Math.sqrt(values[0]**2 + values[1]**2 + values[2]**2), 1.0e-5
   end
 
@@ -24,9 +23,9 @@ class StlTest < Minitest::Test
   end
 
   def test_pack_chunks
-    values = (0...70_000).map { |i| i * 0.5 }
-    parts = Haniwa::STL.pack_chunks(values, "e")
-    assert_equal 3, parts.size
-    assert_equal values, parts.join.unpack("e*")
+    chunks = [[0.5, 1.5, 2.5], [], [3.5]]
+    parts = Haniwa::STL.pack_chunks(chunks, "e")
+    assert_equal 2, parts.size
+    assert_equal [0.5, 1.5, 2.5, 3.5], parts.join.unpack("e*")
   end
 end

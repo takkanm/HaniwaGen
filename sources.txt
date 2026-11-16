@@ -9,3 +9,11 @@ lib/haniwa/tube.rb
 lib/haniwa/arms.rb
 lib/haniwa/params.rb
 lib/haniwa/builder.rb
+app/bridge.rb
+app/param_store.rb
+app/fields.rb
+app/control_panel.rb
+app/preview_pane.rb
+app/download_bar.rb
+app/haniwa_root.rb
+app/main.rb

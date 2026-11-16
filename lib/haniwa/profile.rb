@@ -14,7 +14,7 @@ module Haniwa
       # 帽子・冠のぶんだけ体と顔を低くして、全体の高さを指定どおりに保つ
       kf = 1.0
       kf = 0.86 if head == "hat"
-      kf = 0.95 if head == "crown"
+      kf = 0.97 if head == "crown"
       @hf = @h * kf
       @z_sh = 0.56 * @hf # 肩
       @z_nk = 0.61 * @hf # 首
@@ -30,7 +30,7 @@ module Haniwa
         @face_hi = @z_b0
       elsif head == "crown"
         @brim = 0.12 * @r
-        @z_b1 = 0.92 * @hf
+        @z_b1 = 0.95 * @hf
         @z_b0 = @z_b1 - 1.15 * @brim
         @face_hi = @z_b0
       else

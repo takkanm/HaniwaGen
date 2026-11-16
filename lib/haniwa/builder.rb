@@ -2,8 +2,10 @@ module Haniwa
   # 設定からメッシュを組み立てる入口
   module Builder
     # [円周の分割数, 高さ方向の分割数, 腕の円の分割数]
+    # draft は操作中の粗い表示、preview は手を止めたあとの表示、export は STL 用
     QUALITY = {
-      "preview" => [112, 150, 12],
+      "draft" => [96, 130, 10],
+      "preview" => [160, 220, 16],
       "export" => [256, 380, 28]
     }
 

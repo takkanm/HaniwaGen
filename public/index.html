@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HaniwaGen — 埴輪をデザインして3Dプリント</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+  <script type="module" src="viewer.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>HaniwaGen</h1>
+    <p>パーツを選んで自分好みの埴輪を作り、3Dプリント用の STL をダウンロードできます。</p>
+  </header>
+  <div id="app"><p id="loading">PicoRuby.wasm を読み込んでいます…</p></div>
+
+  <!-- rake build が lib/ と app/ を連結して app.rb を作る -->
+  <script type="text/ruby" src="app.rb"></script>
+  <script src="vendor/picoruby/init.iife.js"></script>
+</body>
+</html>

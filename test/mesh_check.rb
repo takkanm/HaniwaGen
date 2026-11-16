@@ -7,7 +7,7 @@ module MeshCheck
     edges = Hash.new(0)
     n = mesh.vertex_count
     (tri_start...(tri_start + tri_count)).each do |t|
-      a, b, c = mesh.tris[t * 3, 3]
+      a, b, c = mesh.triangle(t)
       edges[a * n + b] += 1
       edges[b * n + c] += 1
       edges[c * n + a] += 1
@@ -23,12 +23,11 @@ module MeshCheck
 
   def self.each_triangle(mesh, tri_start = 0, tri_count = nil)
     tri_count ||= mesh.triangle_count - tri_start
-    v = mesh.verts
     (tri_start...(tri_start + tri_count)).each do |t|
-      a, b, c = mesh.tris[t * 3, 3]
-      pa = v[a * 3, 3]
-      pb = v[b * 3, 3]
-      pc = v[c * 3, 3]
+      a, b, c = mesh.triangle(t)
+      pa = mesh.vertex(a)
+      pb = mesh.vertex(b)
+      pc = mesh.vertex(c)
       u = [pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2]]
       w = [pc[0] - pa[0], pc[1] - pa[1], pc[2] - pa[2]]
       nrm = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]]

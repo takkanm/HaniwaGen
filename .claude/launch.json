@@ -4,7 +4,7 @@
     {
       "name": "haniwagen",
       "runtimeExecutable": "ruby",
-      "runtimeArgs": ["-run", "-e", "httpd", ".", "-p", "8765"],
+      "runtimeArgs": ["-S", "rake", "serve"],
       "port": 8765
     }
   ]
