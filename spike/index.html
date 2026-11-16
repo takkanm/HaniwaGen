@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>HaniwaGen spike</title>
+  <style>
+    body { font-family: sans-serif; padding: 16px; }
+    pre { background: #f4f4f4; padding: 8px; white-space: pre-wrap; }
+    label { display: block; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>HaniwaGen 試作</h1>
+  <div id="app">loading PicoRuby.wasm...</div>
+
+  <script>
+    // JS 側は「バイト列を受け取って保存する」だけの薄いヘルパー
+    window.HaniwaJS = {
+      download(parts /* Uint8Array の配列 */, filename) {
+        const blob = new Blob(parts, { type: 'model/stl' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        window.__lastDownload = { size: blob.size, filename };
+        return blob.size;
+      },
+      // 検証用: STLヘッダの三角形数と先頭float
+      stlInfo(parts) {
+        const u8 = HaniwaJS.concat(parts);
+        const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+        return JSON.stringify({ len: u8.byteLength, tris: dv.getUint32(80, true),
+                                f0: dv.getFloat32(84, true), f3: dv.getFloat32(96, true) });
+      },
+      concat(parts) {
+        let n = 0; for (const p of parts) n += p.length;
+        const out = new Uint8Array(n); let o = 0;
+        for (const p of parts) { out.set(p, o); o += p.length; }
+        return out;
+      },
+      // pack したバイト列を Float32Array / Uint32Array として読む
+      f32(parts) { const u = HaniwaJS.concat(parts); return new Float32Array(u.buffer, 0, u.byteLength / 4); },
+      u32(parts) { const u = HaniwaJS.concat(parts); return new Uint32Array(u.buffer, 0, u.byteLength / 4); }
+    };
+  </script>
+  <script type="text/ruby" src="app.rb"></script>
+  <script src="../vendor/picoruby/init.iife.js"></script>
+</body>
+</html>
