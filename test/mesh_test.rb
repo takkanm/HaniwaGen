@@ -105,6 +105,18 @@ class MeshTest < Minitest::Test
     end
   end
 
+  def test_random_designs_are_printable_meshes
+    40.times do |seed|
+      params = Haniwa::Params.random(seed)
+      %w[draft preview].each do |quality|
+        mesh = Haniwa.build(params, quality)
+        assert_equal 0, MeshCheck.edge_problems(mesh), "seed #{seed} #{quality}"
+        mesh.shells.each { |_name, start, count| assert_operator mesh.signed_volume(start, count), :>, 0.0 }
+        assert_in_delta params["h"], mesh.bbox[5], 1.0e-6
+      end
+    end
+  end
+
   def test_export_quality_has_more_triangles
     assert_operator Haniwa.build({}, "export").triangle_count, :>, Haniwa.build({}).triangle_count * 2
   end

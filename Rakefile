@@ -41,3 +41,8 @@ task :stl do
 end
 
 task default: :test
+
+desc "書き出した STL を trimesh で検査する (PYTHON で python を指定できる)"
+task "stl:check" => :stl do
+  sh ENV.fetch("PYTHON", "python3"), "script/check_stl.py", *Dir[File.join("tmp", "stl", "*.stl")].sort
+end
