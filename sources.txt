@@ -1,0 +1,11 @@
+# ブラウザ用に 1 本へ連結する順番 (rake build)。CRuby のテストも同じ順で読み込む。
+lib/haniwa/util.rb
+lib/haniwa/mesh.rb
+lib/haniwa/stl.rb
+lib/haniwa/profile.rb
+lib/haniwa/features.rb
+lib/haniwa/body.rb
+lib/haniwa/tube.rb
+lib/haniwa/arms.rb
+lib/haniwa/params.rb
+lib/haniwa/builder.rb
