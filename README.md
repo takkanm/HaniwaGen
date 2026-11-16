@@ -40,6 +40,7 @@ app/             Funicular のコンポーネント
   fields.rb, control_panel.rb  パーツ選択パネル
   preview_pane.rb  3D プレビュー
   download_bar.rb  STL ダウンロード
+  share_button.rb  設定を含む URL の共有
   haniwa_root.rb   全体の配置、URL と localStorage への保存
   bridge.rb        JS とのやり取り
 public/          配信するファイル（index.html, viewer.js, style.css, vendor/）

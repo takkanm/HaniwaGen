@@ -110,6 +110,41 @@ window.HaniwaJS = {
     requestRender();
   },
 
+  // URL を共有する。共有シートがあれば開き、なければクリップボードにコピーする。
+  // 結果は note (要素) に書く。クリックの処理中に呼ぶこと
+  share(url, title, note) {
+    const say = (text) => {
+      note.textContent = text;
+      clearTimeout(note._timer);
+      note._timer = setTimeout(() => { note.textContent = ''; }, 4000);
+    };
+    const copy = () => {
+      const done = () => say('URLをコピーしました');
+      const manual = () => {
+        // クリップボード API が使えないとき (http で開いた場合など)
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        const ok = document.execCommand('copy');
+        input.remove();
+        ok ? done() : say('コピーできませんでした。アドレスバーの URL を使ってください');
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(done, manual);
+      } else {
+        manual();
+      }
+    };
+    window.__haniwaShare = { url, title };
+    if (navigator.share) {
+      // 共有シートを閉じただけ (AbortError) なら何もしない。それ以外の失敗ではコピーに切り替える
+      navigator.share({ title, url }).catch((error) => { if (error.name !== 'AbortError') copy(); });
+    } else {
+      copy();
+    }
+  },
+
   bytesFromArray(values) {
     return Uint8Array.from(values);
   },

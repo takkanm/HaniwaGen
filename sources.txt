@@ -15,5 +15,6 @@ app/fields.rb
 app/control_panel.rb
 app/preview_pane.rb
 app/download_bar.rb
+app/share_button.rb
 app/haniwa_root.rb
 app/main.rb

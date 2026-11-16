@@ -49,8 +49,11 @@ class HaniwaRoot < Funicular::Component
       end
       div(class: "main") do
         component(PreviewPane, preserve: true, store: store)
-        component(DownloadBar, preserve: true, store: store)
-        p(class: "hint") { "ドラッグで回転、ホイールで拡大・縮小。URL を共有すると同じ埴輪を再現できます。" }
+        div(class: "actions") do
+          component(DownloadBar, preserve: true, store: store)
+          component(ShareButton, preserve: true, store: store)
+        end
+        p(class: "hint") { "ドラッグで回転、ホイールで拡大・縮小。「URLを共有」で、同じ埴輪を再現できる URL を渡せます。" }
       end
     end
   end
