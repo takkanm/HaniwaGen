@@ -9,7 +9,8 @@ class ControlPanel < Funicular::Component
     ["口", [["mouth", "形"], ["ms", "大きさ"], ["my", "高さ"]]],
     ["鼻", [["nose", "形"]]],
     ["腕", [["arms", "形"]]],
-    ["装飾", [["neck", "首飾り"], ["tasuki", "たすき"], ["belt", "腰帯"], ["armor", "甲冑風の横線"]]]
+    ["装飾", [["neck", "首飾り"], ["tasuki", "たすき"], ["belt", "腰帯"], ["armor", "甲冑風の横線"],
+             ["ana", "透かし孔"], ["hake", "ハケ目"]]]
   ]
 
   def field_class(name)

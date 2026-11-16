@@ -100,7 +100,8 @@ window.HaniwaJS = {
       controls.update();
     }
     lastHeight = height;
-    requestRender();
+    // タブが裏にあると requestAnimationFrame が止まるので、ここではすぐ描く
+    renderer.render(scene, camera);
     window.__haniwaMesh = { vertices: pos.length / 12, triangles: idx.length / 12, height };
   },
 

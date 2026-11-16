@@ -1,13 +1,12 @@
 module Haniwa
   # 腕。本体とは別の閉じたソリッドで、両端か根元を本体にめり込ませる。
+  # 実物の埴輪と同じく、細くて単純な棒にする。
   # サポートなしで印刷できるよう、本体の外に出る部分は水平から 50 度以上の傾きにする。
   module Arms
     SLOPE = 1.19 # tan(50度)。横に 1 進む間に縦へ進む量
-    COS50 = 0.6428
-    SIN50 = 0.7660
 
     def self.radius(profile)
-      Haniwa.max2(0.24 * profile.r, 2.5)
+      Haniwa.max2(0.16 * profile.r, 2.0)
     end
 
     # style: "none" | "both" | "one" | "hips" | "chest"
@@ -29,23 +28,29 @@ module Haniwa
       mesh
     end
 
-    # 上げた腕: 肩の中から斜め上へ出て、まっすぐ上に伸びる
+    def self.constant(count, value)
+      list = []
+      i = 0
+      while i < count
+        list << value
+        i += 1
+      end
+      list
+    end
+
+    # 上げた腕: 肩の中から斜め上へ出て、少し内へ傾きながら上に伸びる
     def self.raised(mesh, pf, side, nseg)
       ra = radius(pf)
       r = pf.r
       x0 = r - 1.8 * ra
       z0 = pf.z_sh - 3.3 * ra
-      x1 = r + 1.7 * ra
+      x1 = r + 0.45 * r + ra
       z1 = z0 + (x1 - x0) * SLOPE
-      len = Haniwa.min2(0.16 * pf.h, 0.97 * pf.h - ra - z1)
+      len = Haniwa.min2(0.18 * pf.h, 0.97 * pf.h - ra - z1)
       len = 0.5 * ra if len < 0.5 * ra
-      pts = Tube.chaikin([[side * x0, 0.0, z0], [side * x1, 0.0, z1], [side * x1, 0.0, z1 + len]], 3)
-      radii = []
-      i = 0
-      while i < pts.size
-        radii << ra
-        i += 1
-      end
+      x2 = x1 - 0.25 * len
+      pts = Tube.chaikin([[side * x0, 0.0, z0], [side * x1, 0.0, z1], [side * x2, 0.0, z1 + len]], 3)
+      radii = constant(pts.size, ra)
       # 先端を丸める
       tip = pts[pts.size - 1]
       j = 1
@@ -63,46 +68,34 @@ module Haniwa
       ra = radius(pf)
       r = pf.r
       xin = r - 1.8 * ra
-      xout = r + 1.2 * ra
+      xout = r + 0.4 * r + 0.5 * ra
       dz = (xout - xin) * SLOPE
       z_top = pf.z_sh - 0.8 * ra
       pts = Tube.chaikin([[side * xin, 0.0, z_top - 2.0 * dz], [side * xout, 0.0, z_top - dz], [side * xin, 0.0, z_top]], 3)
-      radii = []
-      i = 0
-      while i < pts.size
-        radii << ra
-        i += 1
-      end
-      Tube.sweep(mesh, side > 0 ? "arm_r" : "arm_l", pts, radii, nseg)
+      Tube.sweep(mesh, side > 0 ? "arm_r" : "arm_l", pts, constant(pts.size, ra), nseg)
     end
 
     # 胸の前で合わせた腕: 肩から体の表面に沿って正面へ下りる
     def self.on_chest(mesh, pf, side, nseg)
       ra = radius(pf)
-      r = pf.r
-      rho = r + 0.2 * ra
-      rin = r - 1.6 * ra
-      phi_a = 1.1 # 63度
+      phi_a = 0.85
       phi_b = 0.10
       z_top = pf.z_sh - 1.2 * ra
-      drop = rho * (phi_a - phi_b) * SLOPE
-      pts = [polar(side, 1.3, rin, z_top + 0.3 * ra)]
+      # 体に 8 割埋まっているので、ここだけ傾きをゆるめて手を胸の高さに保つ
+      drop = pf.r * (phi_a - phi_b) * 0.8
+      pts = [polar(side, 1.05, pf.radius(z_top) - 1.6 * ra, z_top + 0.3 * ra)]
       n = 8
       i = 0
       while i <= n
         t = i.to_f / n
-        pts << polar(side, Haniwa.lerp(phi_a, phi_b, t), rho, z_top - drop * t)
+        z = z_top - drop * t
+        pts << polar(side, Haniwa.lerp(phi_a, phi_b, t), pf.radius(z) + 0.2 * ra, z)
         i += 1
       end
-      pts << polar(side, 0.03, rin, z_top - drop - 0.3 * ra)
+      z_end = z_top - drop - 0.3 * ra
+      pts << polar(side, 0.03, pf.radius(z_end) - 1.6 * ra, z_end)
       pts = Tube.chaikin(pts, 1)
-      radii = []
-      i = 0
-      while i < pts.size
-        radii << ra
-        i += 1
-      end
-      Tube.sweep(mesh, side > 0 ? "arm_r" : "arm_l", pts, radii, nseg)
+      Tube.sweep(mesh, side > 0 ? "arm_r" : "arm_l", pts, constant(pts.size, ra), nseg)
     end
 
     def self.polar(side, phi, rad, z)

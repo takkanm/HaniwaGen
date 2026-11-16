@@ -8,7 +8,7 @@ module Haniwa
       ["g", "int", 50, [0, 100]],
       ["body", "enum", "straight", ["straight", "flared"]],
       ["taga", "int", 1, [0, 3]],
-      ["head", "enum", "round", ["round", "hat", "crown", "mizura"]],
+      ["head", "enum", "round", ["round", "mizura", "helmet", "shimada", "hat", "crown"]],
       ["eye", "enum", "almond", ["almond", "round", "slit", "smile"]],
       ["es", "int", 50, [0, 100]],
       ["ey", "int", 50, [0, 100]],
@@ -21,21 +21,26 @@ module Haniwa
       ["neck", "int", 0, [0, 1]],
       ["tasuki", "int", 0, [0, 1]],
       ["belt", "int", 0, [0, 1]],
-      ["armor", "int", 0, [0, 1]]
+      ["armor", "int", 0, [0, 1]],
+      ["ana", "int", 0, [0, 1]],
+      ["hake", "int", 1, [0, 1]]
     ]
 
     PRESETS = {
-      "dancer" => { "h" => 80, "g" => 40, "body" => "straight", "taga" => 1, "head" => "round",
-                    "eye" => "round", "es" => 45, "ey" => 50, "eg" => 55,
+      # 「踊る人々」: 一本の筒に丸い目と口、片手を上げる
+      "dancer" => { "h" => 80, "g" => 40, "body" => "straight", "taga" => 0, "head" => "round",
+                    "eye" => "round", "es" => 40, "ey" => 50, "eg" => 55,
                     "mouth" => "round", "ms" => 45, "my" => 50, "nose" => "small", "arms" => "one" },
-      "warrior" => { "h" => 100, "g" => 60, "body" => "flared", "taga" => 0, "head" => "hat",
+      # 「武人」: 衝角付冑と短甲、手を腰に当てる
+      "warrior" => { "h" => 100, "g" => 55, "body" => "flared", "taga" => 2, "head" => "helmet",
                      "eye" => "almond", "es" => 50, "ey" => 50, "eg" => 50,
-                     "mouth" => "oval", "ms" => 40, "my" => 50, "nose" => "high", "arms" => "hips",
-                     "belt" => 1, "armor" => 1 },
-      "miko" => { "h" => 90, "g" => 50, "body" => "flared", "taga" => 0, "head" => "crown",
+                     "mouth" => "oval", "ms" => 35, "my" => 50, "nose" => "high", "arms" => "hips",
+                     "belt" => 1, "armor" => 1, "ana" => 1 },
+      # 「巫女」: 島田髷にたすきと首飾り、胸の前で手を合わせる
+      "miko" => { "h" => 90, "g" => 50, "body" => "flared", "taga" => 1, "head" => "shimada",
                   "eye" => "almond", "es" => 55, "ey" => 50, "eg" => 50,
                   "mouth" => "round", "ms" => 30, "my" => 50, "nose" => "small", "arms" => "chest",
-                  "neck" => 1, "tasuki" => 1 }
+                  "neck" => 1, "tasuki" => 1, "ana" => 1 }
     }
 
     def self.defaults

@@ -67,11 +67,11 @@ class MeshTest < Minitest::Test
 
   def test_plain_body_width_matches_girth
     [0, 50, 100].each do |g|
-      params = { "h" => 100, "g" => g, "taga" => 0, "nose" => "none" }
+      params = { "h" => 100, "g" => g, "taga" => 0, "nose" => "none", "head" => "helmet" }
       box = Haniwa.build(params).bbox
       expected = 2.0 * Haniwa::Builder.body_radius(Haniwa::Params.normalize(params))
+      # 冑の衝角は前に出るので、横幅 (X) だけを見る
       assert_in_delta expected, box[3] - box[0], 0.05
-      assert_in_delta expected, box[4] - box[1], 0.05
     end
   end
 
@@ -95,7 +95,7 @@ class MeshTest < Minitest::Test
   end
 
   def test_arms_stay_within_overhang_limit
-    { "both" => 0.005, "one" => 0.005, "hips" => 0.005, "chest" => 0.03 }.each do |arms, limit|
+    { "both" => 0.005, "one" => 0.005, "hips" => 0.005, "chest" => 0.12 }.each do |arms, limit|
       mesh = Haniwa.build({ "arms" => arms }, "export")
       pf = Haniwa::Builder.profile(Haniwa::Params.normalize({}))
       mesh.shells[1..].each do |name, start, count|

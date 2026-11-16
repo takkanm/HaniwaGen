@@ -4,11 +4,12 @@
 # 選択肢 (select)
 class ChoiceField < Funicular::Component
   CHOICES = {
-    "body" => { "straight" => "まっすぐ", "flared" => "裾広がり" },
-    "head" => { "round" => "丸頭", "hat" => "とんがり帽子", "crown" => "平らな冠", "mizura" => "みずら" },
+    "body" => { "straight" => "まっすぐ（一本の筒）", "flared" => "裾広がり（台の上に衣の裾）" },
+    "head" => { "round" => "丸頭", "mizura" => "みずら（肩まで垂れる髪）", "helmet" => "衝角付冑", "shimada" => "島田髷",
+                "hat" => "とんがり帽子", "crown" => "平らな冠" },
     "eye" => { "almond" => "アーモンド形", "round" => "丸", "slit" => "細いスリット", "smile" => "三日月（にっこり）" },
     "mouth" => { "round" => "丸", "oval" => "横長の楕円", "open" => "大きく開いた口", "frown" => "への字" },
-    "nose" => { "none" => "なし", "small" => "小さい突起", "high" => "高い鼻" },
+    "nose" => { "none" => "なし", "small" => "低い鼻筋", "high" => "高い鼻" },
     "arms" => { "none" => "なし（筒状）", "both" => "両手を上げる", "one" => "片手を上げる",
                 "hips" => "腰に手を当てる", "chest" => "胸の前で手を合わせる" }
   }

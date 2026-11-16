@@ -2,18 +2,23 @@ module Haniwa
   # 頭と胴。半径マップ r(phi, z) から閉じたメッシュを 1 枚作る。
   # 正面は -Y、上は +Z。底は z = 0 の平面。
   module Body
-    def self.build(mesh, profile, features, nt, dz)
+    # hake_amp > 0 のとき、肩より下に縦のハケ目 (細い筋) を hake_n 本入れる
+    def self.build(mesh, profile, features, nt, dz, hake_amp = 0.0, hake_n = 64)
       mesh.begin_shell("body")
       zs = profile.ring_zs(dz)
       sins = []
       coss = []
       phis = []
+      hake = []
+      hake_top = profile.z_sh
+      hake_fade = 0.04 * profile.h
       i = 0
       while i < nt
         phi = TWO_PI * i / nt
         phis << phi
         sins << Math.sin(phi)
         coss << Math.cos(phi)
+        hake << -hake_amp * 0.5 * (1.0 - Math.cos(hake_n * phi))
         i += 1
       end
 
@@ -32,14 +37,17 @@ module Haniwa
           k += 1
         end
         na = active.size
+        hk = 0.0
+        hk = Haniwa.clamp((hake_top - z) / hake_fade, 0.0, 1.0) if hake_amp > 0.0 && z < hake_top
         i = 0
         while i < nt
           r = base
+          r += hake[i] * hk if hk > 0.0
           if na > 0
             phi = phis[i]
             k = 0
             while k < na
-              r += active[k].delta(phi, z)
+              r += active[k].delta(phi, z, base)
               k += 1
             end
             r = 0.3 if r < 0.3
